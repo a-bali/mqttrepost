@@ -1,0 +1,40 @@
+# Logging debug messsages
+# - 'false': only startup and error messages are logged (default)
+# - 'true': all incoming and outgoing messages are logged
+debug: true
+
+# MQTT server to connect to
+server:
+  host: openwrt.lan
+  port: 1883
+#  user: mqttusername
+#  password: mqttpassword
+
+# MQTT topics to subscribe to (and repost)
+topics:
+  # Example 1 (JSON decoding):
+  # - 'source' specifies the topic to subscribe to
+  # - 'json' specifies the decoding rules for JSON input
+  # -- 'source' within the JSON block is the JSON reference (can be multilevel e.g. 'device.friendlyName')
+  # -- 'target' within the JSON block is the topic where the value extracted by the source reference should be posted
+
+  - source: zigbee2mqtt/aqara_outside
+    json:
+      - source: temperature
+        target: /sensors/aqara_outside/temperature
+      - source: humidity
+        target: /sensors/aqara_outside/humidity
+      - source: pressure
+        target: /sensors/aqara_outside/pressure
+      - source: linkquality
+        target: /sensors/aqara_outside/linkquality
+      - source: battery
+        target: /sensors/aqara_outside/battery
+      - source: voltage
+        target: /sensors/aqara_outside/voltage
+
+  # Example 2: simple reposting, no JSON decoding is performde
+  # - 'source' specifies the topic to subscribe to
+  # - 'target' specifies the topic to repost to
+  - source: /sensors/originalsensor/value
+    target: /sensors/newsensor/value
