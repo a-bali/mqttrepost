@@ -14,11 +14,14 @@ server:
 topics:
   # Example 1 (JSON decoding):
   # - 'source' specifies the topic to subscribe to
+  # - 'deduplicate' specifies the time window in seconds for deduplication (optional). If two messages are received
+  #    consecutively within this period with identical content, the second one is discarded.
   # - 'json' specifies the decoding rules for JSON input
   # -- 'source' within the JSON block is the JSON reference (can be multilevel e.g. 'device.friendlyName')
   # -- 'target' within the JSON block is the topic where the value extracted by the source reference should be posted
 
   - source: zigbee2mqtt/aqara_outside
+    deduplicate: 60
     json:
       - source: temperature
         target: /sensors/aqara_outside/temperature
@@ -33,7 +36,7 @@ topics:
       - source: voltage
         target: /sensors/aqara_outside/voltage
 
-  # Example 2: simple reposting, no JSON decoding is performde
+  # Example 2: simple reposting, no JSON decoding is performed
   # - 'source' specifies the topic to subscribe to
   # - 'target' specifies the topic to repost to
   - source: /sensors/originalsensor/value

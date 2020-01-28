@@ -1,8 +1,8 @@
 # MQTTRepost
 ## Objective
-MQTTRepost subscribes to predefined MQTT topics and reposts all incoming messages in these topics to other predefined topics. You can optionally decode incoming JSON messages so that different values incorporated in the incoming message are posted as separate messages to other topics.
+MQTTRepost subscribes to predefined MQTT topics and reposts all incoming messages in these topics to other predefined topics. It can optionally decode incoming JSON messages so that different values incorporated in the incoming message are posted as separate messages to other topics. It also offers possibility to eliminate duplicate messages, received with identical content in a predefined time window.
 
-This tool's original use case is to listen to incoming messages from a [zigbee2mqtt](https://www.zigbee2mqtt.io/) gateway and forward them to other MQTT topics for reprocessing. JSON decoding was added to properly restructure incoming data from multisensors (e.g. [Xiaomi Aqara temperature, humidity and pressure sensor](https://www.zigbee2mqtt.io/devices/WSDCGQ11LM.html)) to separate topics that are further processed by [telegraf](https://github.com/influxdata/telegraf) into [influxdb](https://github.com/influxdata/influxdb).
+This tool's original use case is to listen to incoming messages from a [zigbee2mqtt](https://www.zigbee2mqtt.io/) gateway and forward them to other MQTT topics for reprocessing. JSON decoding was added to properly restructure incoming data from multisensors (e.g. [Xiaomi Aqara temperature, humidity and pressure sensor](https://www.zigbee2mqtt.io/devices/WSDCGQ11LM.html)) to separate topics that are further processed by [telegraf](https://github.com/influxdata/telegraf) into [influxdb](https://github.com/influxdata/influxdb). Deduplication was added because these sensors often send duplicate messages at the same time.
 
 ## Building and installing
 

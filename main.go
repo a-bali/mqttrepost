@@ -13,9 +13,10 @@ import (
 )
 
 type Topic struct {
-	Source string
-	Target string
-	JSON   []struct {
+	Source      string
+	Target      string
+	Deduplicate int
+	JSON        []struct {
 		Source string
 		Target string
 	}
@@ -31,9 +32,15 @@ type Config struct {
 	Topics []Topic
 }
 
+type DedupCache struct {
+	Timestamp time.Time
+	Payload   string
+}
+
 var config Config
-var topics = make(map[string]Topic)
 var client mqtt.Client
+var topics = make(map[string]Topic)
+var dedup = make(map[string]DedupCache)
 
 func main() {
 	if len(os.Args) != 2 {
@@ -91,6 +98,17 @@ func main() {
 func onMessageReceived(client mqtt.Client, message mqtt.Message) {
 
 	debug("MQTT receive: " + message.Topic() + ": " + string(message.Payload()))
+
+	if to := topics[message.Topic()].Deduplicate; to != 0 {
+		defer func() { dedup[message.Topic()] = DedupCache{time.Now(), string(message.Payload())} }()
+		if d, ok := dedup[message.Topic()]; ok {
+			if d.Timestamp.Add(time.Duration(to)*time.Second).After(time.Now()) &&
+				d.Payload == string(message.Payload()) {
+				debug("Ignoring duplicate message")
+				return
+			}
+		}
+	}
 
 	if topics[message.Topic()].Target != "" {
 		postMQTT(topics[message.Topic()].Target, string(message.Payload()))
