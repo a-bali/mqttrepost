@@ -74,7 +74,7 @@ func main() {
 			topics[t.Source] = byte(0)
 		}
 		if token := c.SubscribeMultiple(topics, onMessageReceived); token.Wait() && token.Error() != nil {
-			log("Unable to subscribe to MQTT: " + token.Error().Error())
+			panic("Unable to subscribe to MQTT: " + token.Error().Error())
 		} else {
 			for k := range topics {
 				log("Subscribed to " + k)
@@ -84,7 +84,7 @@ func main() {
 
 	client = mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log("Unable to connect to MQTT: " + token.Error().Error())
+		panic("Unable to connect to MQTT: " + token.Error().Error())
 	} else {
 		log("Connected to MQTT server at " + opts.Servers[0].String())
 	}
